@@ -19,7 +19,7 @@ def f(v0):
   r_valores = [r]
   r_deriv = [v0]
   theta_valores = [theta]
-  theta_deriv = [velocidad_ang]
+  theta_deriv = [velocidad_angular]
 
   for i in range(2):
     a_r = aceleracion_asteroide(r)
