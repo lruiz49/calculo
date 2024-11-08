@@ -1,3 +1,5 @@
+from scipy.optimize import bisect
+
 pos_radial_proyectil = 28.2e10
 pos_radial_asteroide = 4.1225e10
 pos_angular_asteroide = 3.025
@@ -47,3 +49,8 @@ def f(v0):
     theta = theta_next
 
   return r - pos_radial_asteroide
+
+  v0_min = 500
+  v0_max = 1e5
+  v0_optimo = bisect(f, v0_min, v0_max, xtol=1e-5)
+  print(f"La velocidad inicial optima para impactar el asteroide es: {v0_optimo}m/s" 
