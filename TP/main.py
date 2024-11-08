@@ -7,7 +7,7 @@ pos_angular_asteroide = 3.025
 
 def aceleracion_asteroide(r):
   G = 6.667430e-11
-  M = masa_asteroide
+  M = 1000
   return -G*M/r**2
 
 def adam_bashforth_3(y_valores,f_valores,delta_t):
@@ -53,4 +53,5 @@ def f(v0):
   v0_min = 500
   v0_max = 1e5
   v0_optimo = bisect(f, v0_min, v0_max, xtol=1e-5)
-  print(f"La velocidad inicial optima para impactar el asteroide es: {v0_optimo}m/s" 
+  print(f"La velocidad inicial optima para impactar el asteroide es: {v0_optimo}m/s")
+
