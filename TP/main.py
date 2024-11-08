@@ -13,7 +13,7 @@ def adam_bashforth_3(y_valores,f_valores,delta_t):
 
 def f(v0):
   r = pos_radial_proyectil
-  velocidad_ang = v0/r
+  velocidad_angular = v0/r
   theta = 0
 
   r_valores = [r]
@@ -21,13 +21,17 @@ def f(v0):
   theta_valores = [theta]
   theta_deriv = [velocidad_ang]
 
-  for i in range(2)
-    a_r = aceleracion_asteroide(r_vals[-1])
-    v_r = r_deriv[-1] + a_r * delta_t
-    r_next = r_vals[-1] + v_r * delta_t
+  for i in range(2):
+    a_r = aceleracion_asteroide(r)
+    r += r_deriv[-1] * delta_t
+    theta += theta_deriv[-1] * delta_t
+    r_deriv.append(a_r)
+    velocidad_angular = v0 / r
 
-    r_valores.append(r_next)
-    r_deriv.append(v_r)
-    theta_next = theta_valores[-1] + theta_deriv[-1] * delta_t
-    theta_valores.append(theta_next)
-    theta_deriv.append(v0 / r_next)
+    r_valores.append(r)
+    theta_valores.append(theta)
+    theta_deriv.append(velocidad_angular)
+
+  while theta < pos_angular_asteroide:
+    
+    
