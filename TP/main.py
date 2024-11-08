@@ -33,5 +33,17 @@ def f(v0):
     theta_deriv.append(velocidad_angular)
 
   while theta < pos_angular_asteroide:
-    
-    
+    a_r = aceleracion_asteroide(r_valores[-1])
+    r_next = adams_bashforth_3(r_valores, r_deriv, delta_t)
+    theta_next = adams_bashforth_3(theta_vals, theta_deriv, delta_t)
+
+    r_valores.append(r_next)
+    r_deriv.append(a_r)
+
+    theta_valores.append(theta_next)
+    theta_deriv.append(v0 / r_next)
+
+    r = r_next
+    theta = theta_next
+
+  return r - pos_radial_asteroide
