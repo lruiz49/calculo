@@ -1,23 +1,20 @@
-import numpy as np
-
 # Constantes y condiciones iniciales
 G = 6.67430e-11  # Constante gravitacional en m^3 kg^-1 s^-2
-M = 7.342e22  # Masa de la luna (en kg)
-R_SAT = 2.82e10  # Posición radial inicial (en metros)
-pos_radial_asteroide = 4.1225e10  # Posición radial del asteroide (en metros)
+M = 5.972e24  # Masa de la Tierra (en kg)
+R_SAT = 2820000000  # Posición radial inicial (en metros)
+pos_radial_asteroide = 4122500000  # Posición radial del asteroide (en metros)
 pos_angular_asteroide = 3.025  # Posición angular del asteroide (en radianes)
 
 # Condiciones iniciales
 s_0 = 0  # Velocidad radial inicial
 
 def ds_dt(s, omega, r):
-    # Derivada de s
-    omega_prime = -2 * s * omega / r
-    return r * omega_prime - G * M / r ** 2
+    # Derivada de la velocidad radial (aceleración radial)
+    return r * omega**2 - G * M / r**2  # Aceleración centrífuga menos gravitacional
 
 def domega_dt(s, omega, r):
     # Derivada de omega
-    return -2 * s * omega / r
+    return -2 * s * omega / r  # Ecuación de movimiento para la velocidad angular
 
 # Método de Runge-Kutta de 2º orden
 def runge_kutta_2(s, omega, r, delta_t):
@@ -78,7 +75,7 @@ def adams_bashforth_3(s_0, omega_0, r_0, delta_t, t_end):
 # Función f(v0) para evaluar la diferencia entre la posición final del proyectil y el asteroide
 def f(v0):
     delta_t = 10  # Paso de tiempo en segundos
-    t_end = 1e7  # Tiempo total de simulación en segundos
+    t_end = 1e6  # Tiempo total de simulación en segundos
 
     # Condición inicial omega
     omega_0 = v0 / R_SAT
@@ -91,31 +88,27 @@ def f(v0):
 
     return final_s - pos_radial_asteroide
 
-# Método de Bisección para encontrar la velocidad inicial óptima
-def bisection(f, a, b, tol=1e-6, max_iter=1000):
-    if f(a) * f(b) >= 0:
-        raise ValueError("La función debe cambiar de signo en el intervalo [a, b].")
+# Derivada de f(v0) para el método de Newton-Raphson
+def df(v0):
+    epsilon = 1e-6  # Un pequeño incremento para aproximar la derivada numéricamente
+    return (f(v0 + epsilon) - f(v0)) / epsilon
 
-    iter_count = 0
-    while (b - a) / 2 > tol and iter_count < max_iter:
-        c = (a + b) / 2
-        if f(c) == 0:
-            return c  # Encontramos la raíz exacta
-        elif f(a) * f(c) < 0:
-            b = c
-        else:
-            a = c
-        iter_count += 1
+# Método de Newton-Raphson para encontrar la velocidad inicial óptima
+def newton_raphson(f, df, v0_init, tol=1e-6, max_iter=1000):
+    v0 = v0_init
+    for _ in range(max_iter):
+        v0_next = v0 - f(v0) / df(v0)
+        if abs(v0_next - v0) < tol:
+            return v0_next
+        v0 = v0_next
+    raise ValueError("No se encontró una solución dentro del número máximo de iteraciones")
 
-    return (a + b) / 2
+# Valor inicial para el método de Newton-Raphson
+v0_init = 1000  # Valor inicial para la velocidad tentativa
 
-# Intervalo inicial para Bisección
-a = 500  # Límite inferior de la velocidad inicial tentativa
-b = 500000  # Límite superior de la velocidad inicial tentativa
-
-# Ejecutamos el método de Bisección
+# Ejecutamos el método de Newton-Raphson
 try:
-    v0_optimo = bisection(f, a, b)
+    v0_optimo = newton_raphson(f, df, v0_init)
     print(f"Velocidad inicial óptima para impactar el asteroide: {v0_optimo:.2f} m/s")
 except ValueError as e:
     print(e)
